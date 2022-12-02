@@ -38,4 +38,5 @@
 *.layout
 
 # VSCode Settings files
-*/.vscode/settings.json
+*.vscode/settings.json
+*.vscode/launch.json
