@@ -12,6 +12,7 @@ def priority(char):
 
 
 def Part1(data):
+    data = [l.strip() for l in data]
     common = []
     for rucksack in data:
         compLen = len(rucksack)//2
@@ -19,6 +20,7 @@ def Part1(data):
     return sum(priority(c) for c in common)
 
 def Part2(data):
+    data = [l.strip() for l in data]
     common = []
     for rucksacks in [[data[3*i],data[3*i+1],data[3*i+2]] for i in range(len(data)//3)]:
         common += commonElement(rucksacks)

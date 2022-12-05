@@ -11,6 +11,7 @@ def matchScore(opp, you):
     else:                              return SCOREVALS['tie']
 
 def Part1(data):
+    data = [l.strip() for l in data]
     playDict = {'A':'rock','B':'paper','C':'scissors','X':'rock','Y':'paper','Z':'scissors'}
     score = 0
     for game in data:
@@ -19,6 +20,7 @@ def Part1(data):
     return score
 
 def Part2(data):
+    data = [l.strip() for l in data]
     playDict = {'A':'rock','B':'paper','C':'scissors'}
     cheatDict = {'X':'lose','Y':'tie','Z':'win'}
     score = 0

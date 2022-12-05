@@ -33,7 +33,7 @@ def formatTime(start,end):
 def readInput(folder):
     with open(folder+'/input.txt') as fp:
         lines = fp.readlines()
-    return [l.strip() for l in lines]
+    return [l.replace('\n','') for l in lines]
 
 def main() -> int:
     """Specify which problem to run. Takes a single integer argument"""

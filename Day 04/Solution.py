@@ -13,7 +13,9 @@ def overlap(range1,range2):
     return False
 
 def Part1(data):
+    data = [l.strip() for l in data]
     return len([d for d in data if contained(*d.split(','))])
 
 def Part2(data):
+    data = [l.strip() for l in data]
     return len([d for d in data if overlap(*d.split(','))])
