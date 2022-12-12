@@ -19,6 +19,7 @@ def neighbors(elevs):
                 neighbors[e].add(neigh)
     return neighbors
 
+# When h=0, this is Dijkstra's; when d also equals 1, this is essentially a BFS
 def A_Star(graph,start,end,h = lambda n: 0,d = lambda a,b: 1):
     openSet = {start}
     cameFrom = dict()
@@ -59,21 +60,17 @@ def parseData(data):
 def Part1(data):
     elev, start, end = parseData(data)
     elevGraph = neighbors(elev)
-    # On this particular problem, it turns out to be easier to just use Djikstra's (heuristic h(n)=0) than compute the manhattan distance
+    # On this particular problem, it turns out to be easier to just use Dijkstra's (heuristic h(n)=0) than compute the manhattan distance
     path = A_Star(elevGraph,start,end)
+    # We subtract the starting point from the path-length
     return len(path)-1
 
 def Part2(data):
     elev, start, end = parseData(data)
     elevGraph = neighbors(elev)
-    # Possible starts
-    starts = {k for k,v in elev.items() if v=='a'}
-    # A solution to find the best start is to allow us to freely move between starting points (no cost)
-    for s in starts:
-        elevGraph[s] = elevGraph[s].union(starts)
-        elevGraph[s].remove(s)
-    minStart = min([abs(end[1]-n[1]) + abs(end[0]-n[0]) for n in starts])
-    # On this particular problem, it turns out to be easier to just use Djikstra's (heuristic h(n)=0) than compute the manhattan distance
-    path = A_Star(elevGraph,start,end,d=lambda a,b: 0 if a in starts and b in starts else 1)
-    # The 'next' part is the index of the first element that is not a possible start
-    return len(path)-next(i for i,p in enumerate(path) if elev[p] != 'a')
+    # We essentially just add a node connected to all possible starts
+    elevGraph[(-1,-1)] = {k for k,v in elev.items() if v=='a'}
+    # On this particular problem, it turns out to be easier to just use Dijkstra's (heuristic h(n)=0) than compute the manhattan distance
+    path = A_Star(elevGraph,(-1,-1),end)
+    # We subtract the starting point and the added node from the path-length
+    return len(path)-2
