@@ -19,7 +19,7 @@ def neighbors(elevs):
                 neighbors[e].add(neigh)
     return neighbors
 
-def A_Star(graph,start,end,h,d = lambda a,b: 1):
+def A_Star(graph,start,end,h = lambda n: 0,d = lambda a,b: 1):
     openSet = {start}
     cameFrom = dict()
 
@@ -59,8 +59,8 @@ def parseData(data):
 def Part1(data):
     elev, start, end = parseData(data)
     elevGraph = neighbors(elev)
-    # Manhattan distance is a consistent heuristic for this problem
-    path = A_Star(elevGraph,start,end,lambda n: abs(end[1]-n[1]) + abs(end[0]-n[0]) )
+    # On this particular problem, it turns out to be easier to just use Djikstra's (heuristic h(n)=0) than compute the manhattan distance
+    path = A_Star(elevGraph,start,end)
     return len(path)-1
 
 def Part2(data):
@@ -73,7 +73,7 @@ def Part2(data):
         elevGraph[s] = elevGraph[s].union(starts)
         elevGraph[s].remove(s)
     minStart = min([abs(end[1]-n[1]) + abs(end[0]-n[0]) for n in starts])
-    # Manhattan distance is still practically admissible (Assuming you do not cross a starting node, which can be ignored) with a change to account for the "best" start
-    path = A_Star(elevGraph,start,end,lambda n: abs(end[1]-n[1]) + abs(end[0]-n[0]) if n not in starts else minStart, lambda a,b: 0 if a in starts and b in starts else 1)
+    # On this particular problem, it turns out to be easier to just use Djikstra's (heuristic h(n)=0) than compute the manhattan distance
+    path = A_Star(elevGraph,start,end,d=lambda a,b: 0 if a in starts and b in starts else 1)
     # The 'next' part is the index of the first element that is not a possible start
     return len(path)-next(i for i,p in enumerate(path) if elev[p] != 'a')
