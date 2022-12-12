@@ -1,5 +1,4 @@
-from collections import defaultdict
-from math import inf
+from collections import deque
 
 def addTuple(a,b):
     return tuple(map(lambda i, j: i + j, a, b))
@@ -19,35 +18,28 @@ def neighbors(elevs):
                 neighbors[e].add(neigh)
     return neighbors
 
-# When h=0, this is Dijkstra's; when d also equals 1, this is essentially a BFS
-def A_Star(graph,start,end,h = lambda n: 0,d = lambda a,b: 1):
-    openSet = {start}
-    cameFrom = dict()
+def BFS_Path(graph,start,end):
+    nodes = deque([start])
+    comeFrom = dict()
+    
+    while len(nodes) > 0:
+        n = nodes.popleft()
+        if n == end:
+            path = []
+            node = end
+            while node != start:
+                path.append(node)
+                node = comeFrom[node]
+            path.append(start)
+            return path
 
-    gScore = defaultdict(lambda: inf)
-    gScore[start] = 0
-    fScore = defaultdict(lambda: inf)
-    fScore[start] = h(start)
-
-    while len(openSet) > 0:
-        current = min(openSet,key=lambda coord: fScore[coord])
-        if current == end:
-            path = [end]
-            while current != start:
-                current = cameFrom[current]
-                path.append(current) 
-            return path[-1::-1]
-
-        openSet.remove(current)
-        for neigh in graph[current]:
-            tentative_gScore = gScore[current] + d(current,neigh)
-            if tentative_gScore < gScore[neigh]:
-                cameFrom[neigh] = current
-                gScore[neigh] = tentative_gScore
-                fScore[neigh] = tentative_gScore + h(neigh)
-                openSet.add(neigh)
-
+        for newNode in graph[n]:
+            if newNode not in comeFrom.keys():
+                comeFrom[newNode] = n
+                nodes.append(newNode)
     return []
+
+        
 
 
 
@@ -60,17 +52,12 @@ def parseData(data):
 def Part1(data):
     elev, start, end = parseData(data)
     elevGraph = neighbors(elev)
-    # On this particular problem, it turns out to be easier to just use Dijkstra's (heuristic h(n)=0) than compute the manhattan distance
-    path = A_Star(elevGraph,start,end)
-    # We subtract the starting point from the path-length
-    return len(path)-1
+    return len(BFS_Path(elevGraph,start,end))-1
 
 def Part2(data):
     elev, start, end = parseData(data)
     elevGraph = neighbors(elev)
     # We essentially just add a node connected to all possible starts
     elevGraph[(-1,-1)] = {k for k,v in elev.items() if v=='a'}
-    # On this particular problem, it turns out to be easier to just use Dijkstra's (heuristic h(n)=0) than compute the manhattan distance
-    path = A_Star(elevGraph,(-1,-1),end)
     # We subtract the starting point and the added node from the path-length
-    return len(path)-2
+    return len(BFS_Path(elevGraph,(-1,-1),end))-2
